@@ -6,7 +6,7 @@ I've decided to challenge myself to pass the [Certified Kubernetes Application D
 
 ## Resources
 
-- PluralSight: [Certified Kubernetes Application Developer (CKAD) with Tests](https://www.pluralsight.com/paths/certified-kubernetes-application-developer-ckad-2023) - I have ~2 months left on my PluralSight subscription, so I'm going to complete this learning path before my subscription expires
+- PluralSight: [Certified Kubernetes Application Developer (CKAD)](https://www.pluralsight.com/paths/certified-kubernetes-application-developer-ckad-2023) - I have ~2 months left on my PluralSight subscription, so I'm going to complete this learning path before my subscription expires
 
 ## Environment Setup
 
