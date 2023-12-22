@@ -2,7 +2,7 @@
 
 ## Certified Kubernetes Application Developer: Application Design and Build
 
-## Define, Build, and Modify Container Images
+### Define, Build, and Modify Container Images
 
 The first competency listed under "Application Design and Build" is simply _Define, build and modify container images_, which is pretty vague; however, the top 3 skills that come up again and again are:
 
@@ -10,7 +10,7 @@ The first competency listed under "Application Design and Build" is simply _Defi
 * Name, tag, re-tag images, and pull/push images to image registries
 * Save images as OCI archives
 
-### Building
+#### Building
 
 ```shell
 docker image build -t name:optional-tag .
@@ -33,7 +33,7 @@ It _is_ also possible to take a running container that may have been modified wh
 docker commit <container> <image-name>
 ```
 
-### Re-naming/tagging Images
+#### Re-naming/tagging Images
 
 Say, for example, you build an image without using your username on Docker Hub; in this case, you'll need to rename the image:
 
@@ -45,7 +45,7 @@ If you're using the Docker CLI, you don't need to include the registry prefix to
 
 *NOTE:* If you run `docker image ls` you'll see both the old and the new images appear in the list, and both will share the same image ID.
 
-### Pushing/Pulling Images
+#### Pushing/Pulling Images
 
 According to this course, it's unlikely the exam will ask you to push an image; however, it's almost certain it will ask you to pull an image.
 
@@ -53,7 +53,7 @@ According to this course, it's unlikely the exam will ask you to push an image; 
 docker image pull name:optional-tag
 ```
 
-### Saving Images
+#### Saving Images
 
 In the event you're asked to save an image as a tar file:
 
@@ -67,7 +67,7 @@ Or, gzipped:
 docker save name:optional-tag | gzip > name.tar.gz
 ```
 
-### Exam Scenarios
+#### Exam Scenarios
 
 Things to note about the exam:
 
@@ -75,3 +75,39 @@ Things to note about the exam:
 * Each cluster contains multiple namespaces, and it's **your responsibility to read the question correctly and use the right namespace**
 
 The course repo (https://github.com/nigelpoulton/ckad) contains some scenarios you can use to test yourself on the content from the module.
+
+### Understand Jobs and Cron Jobs
+
+Jobs are the way to run a specific number of pods **to completion.** Jobs provides additional mechanisms like retries, backoffs, cleanup, etc. Jobs are managed by the Jobs Controller, which monitors jobs from the control plane.
+
+Example job manifest:
+
+```yaml
+### START JOB TEMPLATE ###
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ckad1
+spec:
+  completions: 5
+  parallelism: 1
+  backoffLimit: 4
+### END JOB TEMPLATE ###
+### START POD TEMPLATE ###
+  template:
+    spec:
+      restartPolicy: Never
+      ### CONTAINER TEMPLATE ###
+      containers:
+      - name: ctr
+        image: apline:latest
+        command: ["echo", "Let's smash the CKAD!"]
+### END POD TEMPLATE ###
+```
+
+Items to note in the above manifest example:
+
+* `completions: 5`: stipulates the job should spin up 5 pods
+* `parallelism: 1`: stipulates that only 1 pod should run at a time
+* `backoffLimit: 4`: stipulates that if there's an error, the job should try to restart the pod a maximum of 4 times using an exponential backoff
+* `restartPolicy: Never`: the value here could also be `OnFailure`, which would mean the node tries to spin up the pod as many times as is allowed by `backoffLimit`; however, `Never` stipulates that failed pods remain, which **is extremely helpful when troubleshooting as it means the pod's logs are available after failure**
